@@ -5,17 +5,25 @@
 Make sure you have access to an NSP Indexer istance https://github.com/proconsule/nspindexer
 
 > From source
+
 Setup a devkitpro build environment
+
 install deps libs (switch-libjpeg-turbo switch-sdl2 switch-curl switch-glad)
+
 make it
 
 edit config.template.ini and rename in config.ini
+
 copy resulting nro and config.ini to a folder in /switch directory of your Switch
+
 Enjoy
 
 > From release download
+
 edit config.template.ini and rename in config.ini
+
 copy resulting nro and config.ini to a folder in /switch directory of your Switch
+
 Enjoy
 
 # Thanks to
