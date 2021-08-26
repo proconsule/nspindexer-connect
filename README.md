@@ -26,6 +26,22 @@ copy resulting nro and config.ini to a folder in /switch directory of your Switc
 
 Enjoy
 
+## FAQ
+**Question:** It will crash my switch?
+
+**Answer:** Maybe, but is unlikely that can damage your system as for now only retrive info
+##
+
+**Question:** Is is stable, is state of the art coded?
+
+**Answer:** This is in active development phase, and no is far from state of the art. It just works
+##
+
+**Question:** This will change my life?
+
+**Answer:** I don't think so, but maybe it can be usefull
+##
+
 # Thanks to
 - joel16 for NX-Shell (Next). I take ImGui windows system from there
 - XorTroll for Goldleaf. I take a small part of code (for retriving installed switch titles) 
