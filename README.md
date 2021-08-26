@@ -27,9 +27,9 @@ copy resulting nro and config.ini to a folder in /switch directory of your Switc
 Enjoy
 
 # Thanks to
--joel16 for NX-Shell (Next). I take ImGui windows system from there
--XorTroll for Goldleaf. I take a small part of code (for retriving installed switch titles) 
--duckbill007 for his hints on UTF8 and Switch console limitation
--AlanLC at GBAtemp (for the app icon)
--lordelan for his support on GBATemp forum
--All guys on GBATemp who liked my projects
+- joel16 for NX-Shell (Next). I take ImGui windows system from there
+- XorTroll for Goldleaf. I take a small part of code (for retriving installed switch titles) 
+- duckbill007 for his hints on UTF8 and Switch console limitation
+- AlanLC at GBAtemp (for the app icon)
+- lordelan for his support on GBATemp forum
+- All guys on GBATemp who liked my projects
