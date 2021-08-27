@@ -22,7 +22,7 @@ Enjoy
 
 edit config.template.ini and rename in config.ini
 
-copy resulting nro and config.ini to a folder in /switch directory of your Switch
+copy  nro and config.ini to a folder in /switch directory of your Switch
 
 Enjoy
 

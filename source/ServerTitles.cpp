@@ -10,9 +10,7 @@ bool compareAlphabet(const MatchedTitle& a, const MatchedTitle& b)
 
 ServerTitles::ServerTitles(char * jsondata){
 
-    printf("%s\n",jsondata);
-	
-	Document d;
+    Document d;
     d.Parse(jsondata);
 	
 	const Value& titlesarray = d["titles"];

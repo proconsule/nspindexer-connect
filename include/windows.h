@@ -21,7 +21,7 @@ namespace Windows {
     };
 
     void MainWindow(void);
-    int LocaltoServerWindow(std::vector<MatchedTitle>);
+    int LocaltoServerWindow(std::vector<MatchedTitle>,bool focus);
 }
 
 namespace DetailWindows {

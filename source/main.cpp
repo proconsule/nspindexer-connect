@@ -238,30 +238,31 @@ int main() {
 		int detailidx = 0;
 		int titlefilter = 0;
 		bool showMainOptionPopup = false;
+		bool focusonMain = true;
         while (!exit) {
             SDL_Event event;
             while (SDL_PollEvent(&event)) {
-                ImGui_ImplSDL2_ProcessEvent(&event);
-		if (event.type == SDL_JOYBUTTONDOWN) {
-			Uint8 button = event.jbutton.button;
-			if (button == SDL_KEY_PLUS) {
-                        	exit = 1;
-			}
-			if (button == SDL_KEY_Y) {
-				showMainOptionPopup = true;
-			}
-			if (button == SDL_KEY_B) {
-				if(showMainOptionPopup == true){
-					showMainOptionPopup = false;
-				}
-			}
-		} 
-		if (event.type == SDL_QUIT){
-			exit = 1;
-		}           
+				ImGui_ImplSDL2_ProcessEvent(&event);
+				if (event.type == SDL_JOYBUTTONDOWN) {
+					Uint8 button = event.jbutton.button;
+					if (button == SDL_KEY_PLUS) {
+						exit = 1;
+					}
+					if (button == SDL_KEY_Y) {
+						showMainOptionPopup = true;
+					}
+					if (button == SDL_KEY_B) {
+						if(showMainOptionPopup == true){
+							showMainOptionPopup = false;
+						}
+					}
+				} 
+				if (event.type == SDL_QUIT){
+					exit = 1;
+				}           
 
 
-	    }
+			}
 
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplSDL2_NewFrame(window);
@@ -273,8 +274,9 @@ int main() {
 				myservertitles = new ServerTitles(mycurl->chunk.memory);
 				myservertitles->Match(mytitles);
 			}
-	   
+			focusonMain = true;
 			if(showMainOptionPopup){
+				focusonMain = false;
 				int tmptitlefilter = Popups::MainOptionsPopup(titlefilter);
 				if( tmptitlefilter != titlefilter){
 					myservertitles->matchedtitles.clear();
@@ -284,7 +286,7 @@ int main() {
 			}
 			
 			myservertitles->matchedtitles = DetailWindows::DetailServerWindow(myservertitles->matchedtitles,detailidx);
-			detailidx = Windows::LocaltoServerWindow(myservertitles->matchedtitles);
+			detailidx = Windows::LocaltoServerWindow(myservertitles->matchedtitles,focusonMain);
 			
 			
 			

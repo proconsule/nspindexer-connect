@@ -58,11 +58,13 @@ namespace Windows {
 		ImGui::Dummy(ImVec2(0.0f, 5.0f)); // Spacing
 	}
 	
-	int LocaltoServerWindow(vector<MatchedTitle> mytitles) {
+	int LocaltoServerWindow(vector<MatchedTitle> mytitles,bool focus) {
 		Windows::SetupWindow();
 		static int item_current_idx = 0;
 		if (ImGui::Begin("Check Installed VS Server", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-            
+            if(focus){
+				ImGui::SetNextWindowFocus();
+			}
 			if (ImGui::BeginListBox("Installed Titles",ImVec2(1280.0f, 720.0f)))
             {
             for (int n = 0; n < (int)mytitles.size(); n++)
