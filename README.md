@@ -1,7 +1,7 @@
 # NSP Indexer Connect
 > Switch Homebrew app for checking Titles against a NSP Indexer instance
 
-# How To
+# How To Setup
 Make sure you have access to an NSP Indexer istance https://github.com/proconsule/nspindexer
 
 > From source
@@ -26,6 +26,18 @@ copy resulting nro and config.ini to a folder in /switch directory of your Switc
 
 Enjoy
 
+# How to use
+To exit press + button
+
+Button A to select entry
+
+Button Y to show Sort Options Popup
+
+Button B to go back from Popups
+
+Just this!
+
+
 ## FAQ
 **Question:** It will crash my switch?
 
@@ -45,7 +57,8 @@ Enjoy
 # Thanks to
 - joel16 for NX-Shell (Next). I take ImGui windows system from there
 - XorTroll for Goldleaf. I take a small part of code (for retriving installed switch titles) 
+- All guys of Switchbrew (for TONS of info and tools they published)
 - duckbill007 for his hints on UTF8 and Switch console limitation
 - AlanLC at GBAtemp (for the app icon)
 - lordelan for his support on GBATemp forum
-- All guys on GBATemp who liked my projects
+- All guys at GBATemp who liked my projects

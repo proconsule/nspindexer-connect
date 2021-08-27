@@ -87,8 +87,11 @@ int main() {
 		CSimpleIniA ini;
 		ini.SetUnicode();
 
-		SI_Error rc = ini.LoadFile("/switch/nsp-indexer-connect/config.ini");
-		if (rc < 0) { 
+		SI_Error rc = ini.LoadFile("config.ini");
+		if (rc < 0) {
+			rc = ini.LoadFile("/switch/nsp-indexer-connect/config.ini");
+		}	
+		if(rc<0){
 			consoleInit(NULL);
 			padConfigureInput(1, HidNpadStyleSet_NpadStandard);
 
