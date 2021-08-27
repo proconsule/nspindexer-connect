@@ -8,7 +8,7 @@ bool compareAlphabet(const MatchedTitle& a, const MatchedTitle& b)
 
 
 
-ServerTitles::ServerTitles(char * jsondata){
+ServerTitles::ServerTitles(char * jsondata,char * serverconfigjsondata){
 
     Document d;
     d.Parse(jsondata);
@@ -22,9 +22,12 @@ ServerTitles::ServerTitles(char * jsondata){
 		const Value& thistitleupdates = thistitle["updates"];
 		myservertitle.titleText = thistitle["name"].GetString();
 		myservertitle.lastliveversion = thistitle["latest_version"].GetInt();
+		myservertitle.versions.push_back(0);
+		myservertitle.filePaths.push_back(thistitle["path"].GetString());
 		if(thistitleupdates.IsObject()){
 			for (Value::ConstMemberIterator itr = thistitle["updates"].MemberBegin(); itr != thistitle["updates"].MemberEnd(); ++itr){
-				myservertitle.lastversion = atoi(itr->name.GetString());
+				myservertitle.versions.push_back(atoi(itr->name.GetString()));
+				myservertitle.filePaths.push_back(thistitleupdates[itr->name.GetString()]["path"].GetString());
 			}
 		}
 		
@@ -40,7 +43,7 @@ void ServerTitles::Match(vector<Title> switchtitles,int filter){
 		tmpmatched.app_id = mytitles[i].app_id;
 		tmpmatched.titleText = mytitles[i].titleText;
 		tmpmatched.isServer = true;
-		tmpmatched.server_version = mytitles[i].lastversion;
+		tmpmatched.server_versions = mytitles[i].versions;
 		tmpmatched.lastlive_version = mytitles[i].lastliveversion;
 		matchedtitles.push_back(tmpmatched);
 	}

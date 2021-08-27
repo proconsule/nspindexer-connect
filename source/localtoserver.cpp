@@ -77,15 +77,15 @@ namespace Windows {
 				ImGui::SameLine(200.0f);
 				
 				if(mytitles[n].isServer && mytitles[n].isSwitch){
-					if(mytitles[n].switch_version < mytitles[n].server_version){
+					if(mytitles[n].switch_version < mytitles[n].server_versions.back()){
 						ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f),u8"%s",mytitles[n].titleText.c_str());
-					}else if(mytitles[n].switch_version >= mytitles[n].server_version){
+					}else if(mytitles[n].switch_version >= mytitles[n].server_versions.back()){
 						if(mytitles[n].switch_version == mytitles[n].lastlive_version){
 							ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f),u8"%s",mytitles[n].titleText.c_str());
 						}else{
 							ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f),u8"%s",mytitles[n].titleText.c_str());
 						}
-					}else if(mytitles[n].switch_version >= mytitles[n].server_version){
+					}else if(mytitles[n].switch_version >= mytitles[n].server_versions.back()){
 						ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f),mytitles[n].titleText.c_str());
 					}else{
 						ImGui::Text(mytitles[n].titleText.c_str());
@@ -124,28 +124,34 @@ namespace DetailWindows {
 		DetailWindows::SetupWindow();
 		
 		if (ImGui::Begin("Details", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse) && idx<(int)mytitles.size()) {
+			auto windowWidth = ImGui::GetWindowSize().x;
 			if(mytitles[idx].icon !=  nullptr){
 				if(mytitles[idx].gltexture.id == 0){
 					LoadTextureFromMemory(mytitles[idx].icon,&mytitles[idx].gltexture.id,&mytitles[idx].gltexture.width,&mytitles[idx].gltexture.height);
 				}else{
+					ImGui::SetCursorPosX((windowWidth - 256) * 0.5f);
 					ImGui::Image((void*)(intptr_t)mytitles[idx].gltexture.id, ImVec2(mytitles[idx].gltexture.width,mytitles[idx].gltexture.height));
 				}
 			}
+			auto titleTextwidth   = ImGui::CalcTextSize(mytitles[idx].titleText.c_str()).x;
+			ImGui::SetCursorPosX((windowWidth - titleTextwidth) * 0.5f);
 			ImGui::Text(mytitles[idx].titleText.c_str());
+			auto authorTextwidth   = ImGui::CalcTextSize(mytitles[idx].authorText.c_str()).x;
+			ImGui::SetCursorPosX((windowWidth - authorTextwidth) * 0.5f);
 			ImGui::Text(mytitles[idx].authorText.c_str());
 			Separator();
 			ImGui::Text("Is on Switch:");
 			ImGui::SameLine();
-			ImGui::TextColored(mytitles[idx].isSwitch ? ImVec4(0.0f,1.0f,0.0f,1.0f) : ImVec4(1.0f,0.0f,0.0f,1.0f) ,mytitles[idx].isSwitch ? "true" : "false");
+			ImGui::TextColored(mytitles[idx].isSwitch ? ImVec4(0.0f,1.0f,0.0f,1.0f) : ImVec4(1.0f,0.0f,0.0f,1.0f) ,u8"%s",mytitles[idx].isSwitch ? "\u2714" : "\u2716");
 			ImGui::Text("Is on Server");
 			ImGui::SameLine();
-			ImGui::TextColored(mytitles[idx].isServer ? ImVec4(0.0f,1.0f,0.0f,1.0f) : ImVec4(1.0f,0.0f,0.0f,1.0f) ,mytitles[idx].isServer ? "true" : "false");
+			ImGui::TextColored(mytitles[idx].isServer ? ImVec4(0.0f,1.0f,0.0f,1.0f) : ImVec4(1.0f,0.0f,0.0f,1.0f) ,u8"%s",mytitles[idx].isServer ? "\u2714" : "\u2716");
 			if(mytitles[idx].isServer && mytitles[idx].isSwitch){
 				ImGui::Text("Switch Version: ");
 				ImGui::SameLine();
-				if(mytitles[idx].switch_version<mytitles[idx].server_version){
+				if(mytitles[idx].switch_version<mytitles[idx].server_versions.back()){
 					ImGui::TextColored(ImVec4(1.0f,0.0f,0.0f,1.0f),std::to_string(mytitles[idx].switch_version).c_str());
-				}else if(mytitles[idx].switch_version>=mytitles[idx].server_version){
+				}else if(mytitles[idx].switch_version>=mytitles[idx].server_versions.back()){
 					if(mytitles[idx].switch_version<mytitles[idx].lastlive_version){
 						ImGui::TextColored(ImVec4(1.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].switch_version).c_str());	
 					}else{
@@ -154,10 +160,10 @@ namespace DetailWindows {
 				}
 				ImGui::Text("Server Version: ");
 				ImGui::SameLine();
-				if(mytitles[idx].server_version<mytitles[idx].lastlive_version){
-					ImGui::TextColored(ImVec4(1.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_version).c_str());	
+				if(mytitles[idx].server_versions.back()<mytitles[idx].lastlive_version){
+					ImGui::TextColored(ImVec4(1.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
 				}else{
-					ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_version).c_str());	
+					ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
 					
 				}
 				ImGui::Text("Live Version: ");

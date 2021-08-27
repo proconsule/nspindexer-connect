@@ -19,8 +19,9 @@ using namespace rapidjson;
 struct ServerTitle{
 	u64 app_id;
 	std::string titleText;
-	int lastversion = 0;
-	int lastliveversion;
+	std::vector<int> versions;
+	int lastliveversion = 0;
+	std::vector<string> filePaths;
 	
 };
 
@@ -38,7 +39,8 @@ struct MatchedTitle{
 	bool isSwitch = false;
 	bool isServer = false;
 	int switch_version = 0;
-	int server_version = 0;
+	std::vector<string> server_filePaths;
+	std::vector<int> server_versions;
 	int lastlive_version = 0;
 	u8 * icon;
 	Tex gltexture;
@@ -49,7 +51,7 @@ struct MatchedTitle{
 class ServerTitles{
 public:
 
-	ServerTitles(char* jsondata);
+	ServerTitles(char* jsondata,char * serverconfigjsondata);
 	vector<ServerTitle> mytitles;
 	vector<MatchedTitle> matchedtitles;
 	void Match(vector<Title> switchtitles,int filter = 0);

@@ -20,7 +20,7 @@
 #include "curlDownloader.h"
 #include "ServerTitles.h"
 
-#define DEBUG_NXLINK
+//#define DEBUG_NXLINK
 
 using namespace std;
 const GLuint WIDTH = 1280, HEIGHT = 720;
@@ -89,7 +89,7 @@ int main() {
 
 		SI_Error rc = ini.LoadFile("config.ini");
 		if (rc < 0) {
-			rc = ini.LoadFile("/switch/nsp-indexer-connect/config.ini");
+			rc = ini.LoadFile("/switch/nspindexer-connect/config.ini");
 		}	
 		if(rc<0){
 			consoleInit(NULL);
@@ -140,11 +140,15 @@ int main() {
 		vector<Title> mytitles = mytitlemanager->SearchTitles(NcmContentMetaType_Unknown,NcmStorageId_SdCard);
 		printf("Titles found: %ld\n",mytitles.size());
 		curlDownloader *mycurl = nullptr;
+		curlDownloader *mycurl_serverconfig = nullptr;
 	    ServerTitles* myservertitles = nullptr;
 		
 		mycurl = new curlDownloader();
-		bool okdownload = mycurl->download(string(serverUrl));
-		myservertitles = new ServerTitles(mycurl->chunk.memory);
+		bool okdownload = mycurl->download(string(serverUrl)+"?titles");
+		
+		mycurl_serverconfig = new curlDownloader();
+		okdownload = mycurl_serverconfig->download(string(serverUrl)+"?config");
+		myservertitles = new ServerTitles(mycurl->chunk.memory,mycurl_serverconfig->chunk.memory);
 		myservertitles->Match(mytitles);
 		if(okdownload){
 			printf("Server info downloaded successful\n");
@@ -219,6 +223,9 @@ int main() {
                 {
 					0x2019, 0x2019,
                     0x2122, 0x2122,
+					0x2713, 0x2713,
+					0x2714, 0x2714,
+					0x2716, 0x2716,
 					0,
                 };
 	
@@ -271,7 +278,7 @@ int main() {
 			if(mycurl == nullptr){
 				mycurl = new curlDownloader();
 				mycurl->download(string(serverUrl));
-				myservertitles = new ServerTitles(mycurl->chunk.memory);
+				myservertitles = new ServerTitles(mycurl->chunk.memory,mycurl_serverconfig->chunk.memory);
 				myservertitles->Match(mytitles);
 			}
 			focusonMain = true;
