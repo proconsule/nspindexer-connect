@@ -118,6 +118,9 @@ vector<Title> TitleManager::SearchTitles(NcmContentMetaType type, NcmStorageId s
                     ok = false;
                     break;
                 }
+				if(isUpdate(&cnt) || isAddon(&cnt)){
+					ok = false;
+				}
             }
             if(ok) {
 				Title tmpTitle;

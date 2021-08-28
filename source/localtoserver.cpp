@@ -93,7 +93,11 @@ namespace Windows {
 					
 				}
 				else if(mytitles[n].isServer){
-					ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f),mytitles[n].titleText.c_str());
+					if(mytitles[n].server_versions.back()<mytitles[n].lastlive_version){
+						ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f),mytitles[n].titleText.c_str());
+					}else{
+						ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f),mytitles[n].titleText.c_str());
+					}
 					
 				}
 				else if(mytitles[n].isSwitch){
@@ -179,9 +183,9 @@ namespace DetailWindows {
 				ImGui::Text("Server Version: ");
 				ImGui::SameLine();
 				if(mytitles[idx].server_versions.back()<mytitles[idx].lastlive_version){
-					ImGui::TextColored(ImVec4(1.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
+					ImGui::TextColored(ImVec4(1.0f,0.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
 				}else{
-					ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
+					ImGui::TextColored(ImVec4(1.0f,1.0f,1.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
 					
 				}
 				ImGui::Text("Live Version: ");
