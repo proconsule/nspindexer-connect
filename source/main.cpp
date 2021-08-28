@@ -27,7 +27,6 @@ Tex dummyNSZ;
 Tex dummyXCI;
 Tex dummyXCZ;
 
-#define DEBUG_NXLINK
 
 using namespace std;
 const GLuint WIDTH = 1280, HEIGHT = 720;
@@ -236,7 +235,35 @@ int main() {
 			socketExit();
 			return 0;
 		}
-		myservertitles = new ServerTitles(mycurl->chunk.memory,mycurl_serverconfig->chunk.memory);
+		
+		
+		
+		myservertitles = new ServerTitles();
+		if(!myservertitles->GetSeverConfig(mycurl_serverconfig->chunk.memory)){
+			padConfigureInput(1, HidNpadStyleSet_NpadStandard);
+
+			PadState pad;
+			padInitializeDefault(&pad);
+
+			printf("Press + to exit\n");
+
+			while(appletMainLoop())
+			{
+				padUpdate(&pad);
+				u64 kDown = padGetButtonsDown(&pad);
+
+				if (kDown & HidNpadButton_Plus) break;
+
+				consoleUpdate(NULL);
+			}
+			consoleExit(NULL);
+			nsExit();
+			ncmExit();
+			socketExit();
+			return 0;
+			
+		}
+		myservertitles->GetServerTitles(mycurl->chunk.memory);
 		myservertitles->Match(mytitles);
 		if(okdownload){
 			printf("Server info downloaded successful\n");
@@ -373,8 +400,13 @@ int main() {
 	   
 			if(mycurl == nullptr){
 				mycurl = new curlDownloader();
-				mycurl->download(string(serverUrl));
-				myservertitles = new ServerTitles(mycurl->chunk.memory,mycurl_serverconfig->chunk.memory);
+				mycurl->download(string(serverUrl)+"?titles");
+				myservertitles = new ServerTitles();
+				
+				if(!myservertitles->GetSeverConfig(mycurl_serverconfig->chunk.memory)){
+					exit=1;
+				}
+				myservertitles->GetServerTitles(mycurl->chunk.memory);
 				myservertitles->Match(mytitles);
 			}
 			focusonMain = true;

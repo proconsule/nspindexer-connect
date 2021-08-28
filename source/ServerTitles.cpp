@@ -1,14 +1,38 @@
 #include "ServerTitles.h"
 
+#define MINSERVERVERSION 0.4
 
 bool compareAlphabet(const MatchedTitle& a, const MatchedTitle& b)
 {
     return a.titleText < b.titleText;
 }
 
+bool ServerTitles::GetSeverConfig(char *jsondata){
+	Document config_document;
+	config_document.Parse(jsondata);
+	if(config_document.IsObject()){	
+		myserverconfig.version = atof(config_document["version"].GetString());
+		printf("NSP Indexer Server version: %.1f\n",myserverconfig.version);
+		if(myserverconfig.version<MINSERVERVERSION){
+			printf("Update to a NSP Indexer Server version > %.1f\n",MINSERVERVERSION);
+			return false;
+		}
+		myserverconfig.contentUrl = config_document["contentUrl"].GetString();
+		myserverconfig.enableRomInfo = config_document["enableRomInfo"].GetBool();
+		
+	}else{
+		printf("Unable to get NSP Indexer Server Config\n");
+		printf("Check your config\n");
+		return false;
+	}
+	return true;
+}
 
+ServerTitles::ServerTitles(){
+	
+}
 
-ServerTitles::ServerTitles(char * jsondata,char * serverconfigjsondata){
+void ServerTitles::GetServerTitles(char * jsondata){
 
     Document d;
     d.Parse(jsondata);
@@ -21,7 +45,9 @@ ServerTitles::ServerTitles(char * jsondata,char * serverconfigjsondata){
 		const Value& thistitle = titlesarray[mytitlekey.c_str()];
 		const Value& thistitleupdates = thistitle["updates"];
 		myservertitle.titleText = thistitle["name"].GetString();
+#ifdef DEBUG_NXLINK
 		printf("%s\n",myservertitle.titleText.c_str());
+#endif
 		myservertitle.serverFileType = thistitle["fileType"].GetString();
 		const rapidjson::Value& lastlive_Value = thistitle["latest_version"];
 		if( lastlive_Value.IsNull() )
@@ -44,15 +70,6 @@ ServerTitles::ServerTitles(char * jsondata,char * serverconfigjsondata){
 		
 		mytitles.push_back(myservertitle);
 		
-	}
-	Document config_document;
-	config_document.Parse(serverconfigjsondata);
-	if(config_document.IsObject()){	
-		myserverconfig.version = config_document["version"].GetString();
-		myserverconfig.contentUrl = config_document["contentUrl"].GetString();
-		myserverconfig.enableRomInfo = config_document["enableRomInfo"].GetBool();
-	}else{
-		printf("Unable to parse server config\n");
 	}
 
 }

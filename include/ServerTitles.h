@@ -18,7 +18,7 @@ using namespace rapidjson;
 
 
 struct ServerConfig{
-	std::string version;
+	float version;
 	std::string contentUrl;
 	bool enableRomInfo;
 };
@@ -53,8 +53,11 @@ struct MatchedTitle{
 
 class ServerTitles{
 public:
-
-	ServerTitles(char* jsondata,char * serverconfigjsondata);
+	
+	
+	ServerTitles();
+	bool GetSeverConfig(char *jsondata);
+	void GetServerTitles(char * jsondata);
 	ServerConfig myserverconfig;
 	vector<ServerTitle> mytitles;
 	vector<MatchedTitle> matchedtitles;

@@ -3,6 +3,8 @@
 
 #include <glad/glad.h>
 
+//#define DEBUG_NXLINK
+
 typedef struct {
     GLuint id = 0;
     int width = 0;
