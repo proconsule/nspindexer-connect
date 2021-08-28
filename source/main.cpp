@@ -27,6 +27,8 @@ Tex dummyNSZ;
 Tex dummyXCI;
 Tex dummyXCZ;
 
+#define DEBUG_NXLINK
+
 using namespace std;
 const GLuint WIDTH = 1280, HEIGHT = 720;
 
