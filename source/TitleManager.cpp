@@ -107,7 +107,7 @@ vector<Title> TitleManager::SearchTitles(NcmContentMetaType type, NcmStorageId s
 		std::vector<Title> finaltitlelist;
 		for(auto &cnt: titles) {
             bool ok = true;
-            for(int i=0;i<finaltitlelist.size();i++) {
+            for(int i=0;i<(int)finaltitlelist.size();i++) {
                 auto cnt_base_app_id = GetBaseApplicationId(cnt.app_id, cnt.type);
                 auto cur_cnt_base_app_id = GetBaseApplicationId(finaltitlelist[i].app_id, finaltitlelist[i].type);
 
