@@ -145,9 +145,33 @@ int main() {
 		
 		mycurl = new curlDownloader();
 		bool okdownload = mycurl->download(string(serverUrl)+"?titles");
+		if(okdownload){
+			printf("Server Titles downloaded successful\n");
+		}else
+		{
+			printf("Error Downloading Data\n");
+			sleep(3);
+			consoleExit(NULL);
+			nsExit();
+			ncmExit();
+			socketExit();
+			return 0;
+		}
 		
 		mycurl_serverconfig = new curlDownloader();
 		okdownload = mycurl_serverconfig->download(string(serverUrl)+"?config");
+		if(okdownload){
+			printf("Server Config downloaded successful\n");
+		}else
+		{
+			printf("Error Downloading Data\n");
+			sleep(3);
+			consoleExit(NULL);
+			nsExit();
+			ncmExit();
+			socketExit();
+			return 0;
+		}
 		myservertitles = new ServerTitles(mycurl->chunk.memory,mycurl_serverconfig->chunk.memory);
 		myservertitles->Match(mytitles);
 		if(okdownload){
@@ -155,7 +179,8 @@ int main() {
 		}else
 		{
 			consoleExit(NULL);
-			nifmExit();
+			nsExit();
+			ncmExit();
 			socketExit();
 			return 0;
 		}
@@ -319,7 +344,6 @@ int main() {
     SDL_Quit();
 	nsExit();
 	ncmExit();
-    nifmExit();
     socketExit();
     return 0;
 }

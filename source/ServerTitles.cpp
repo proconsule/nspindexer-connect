@@ -21,7 +21,17 @@ ServerTitles::ServerTitles(char * jsondata,char * serverconfigjsondata){
 		const Value& thistitle = titlesarray[mytitlekey.c_str()];
 		const Value& thistitleupdates = thistitle["updates"];
 		myservertitle.titleText = thistitle["name"].GetString();
-		myservertitle.lastliveversion = thistitle["latest_version"].GetInt();
+		printf("%s\r\n",myservertitle.titleText.c_str());
+		const rapidjson::Value& lastlive_Value = thistitle["latest_version"];
+		if( lastlive_Value.IsNull() )
+		{
+			myservertitle.lastliveversion = 0;
+		}else if ( lastlive_Value.IsString() ){
+		    myservertitle.lastliveversion = atoi(thistitle["latest_version"].GetString());
+		}else{
+			myservertitle.lastliveversion = thistitle["latest_version"].GetInt();
+		}
+		
 		myservertitle.versions.push_back(0);
 		myservertitle.filePaths.push_back(thistitle["path"].GetString());
 		if(thistitleupdates.IsObject()){

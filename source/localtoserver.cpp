@@ -93,7 +93,7 @@ namespace Windows {
 					
 				}
 				else if(mytitles[n].isServer){
-					ImGui::TextColored(ImVec4(0.0f, 0.0f, 1.0f, 1.0f),mytitles[n].titleText.c_str());
+					ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f),mytitles[n].titleText.c_str());
 					
 				}
 				else if(mytitles[n].isSwitch){
@@ -125,7 +125,7 @@ namespace DetailWindows {
 		
 		if (ImGui::Begin("Details", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse) && idx<(int)mytitles.size()) {
 			auto windowWidth = ImGui::GetWindowSize().x;
-			if(mytitles[idx].icon !=  nullptr){
+			if(mytitles[idx].icon !=  nullptr && mytitles[idx].isSwitch){
 				if(mytitles[idx].gltexture.id == 0){
 					LoadTextureFromMemory(mytitles[idx].icon,&mytitles[idx].gltexture.id,&mytitles[idx].gltexture.width,&mytitles[idx].gltexture.height);
 				}else{
@@ -174,6 +174,20 @@ namespace DetailWindows {
 				ImGui::Text("Switch Version: ");
 				ImGui::SameLine();
 				ImGui::Text(std::to_string(mytitles[idx].switch_version).c_str());	
+			}
+			else if(mytitles[idx].isServer){
+				ImGui::Text("Server Version: ");
+				ImGui::SameLine();
+				if(mytitles[idx].server_versions.back()<mytitles[idx].lastlive_version){
+					ImGui::TextColored(ImVec4(1.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
+				}else{
+					ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
+					
+				}
+				ImGui::Text("Live Version: ");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].lastlive_version).c_str());
+			
 			}
 		
 		}

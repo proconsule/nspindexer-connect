@@ -17,6 +17,7 @@ WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
   mem->memory = ptr;
   memcpy(&(mem->memory[mem->size]), contents, realsize);
   mem->size += realsize;
+  //printf("Donw Size: %d\n",mem->size);
   mem->memory[mem->size] = 0;
  
   return realsize;
@@ -44,7 +45,7 @@ bool curlDownloader::download(string url){
  
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
  
-		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0");
  
 		CURLcode res = curl_easy_perform(curl);
 		

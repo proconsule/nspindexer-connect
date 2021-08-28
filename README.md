@@ -60,5 +60,6 @@ Just this!
 - All guys of Switchbrew (for TONS of info and tools they published)
 - duckbill007 for his hints on UTF8 and Switch console limitation
 - AlanLC at GBAtemp (for the app icon)
+- Ejec on GBAtemp (for his beta testing)
 - lordelan for his support on GBATemp forum
 - All guys at GBATemp who liked my projects
