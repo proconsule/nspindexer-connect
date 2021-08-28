@@ -7,6 +7,7 @@
 #include "globals.h"
 #include "TitleManager.h"
 #include "ServerTitles.h"
+#include "curlDownloader.h"
 
 
 namespace Windows {
@@ -37,7 +38,7 @@ namespace DetailWindows {
         ImGui::PopStyleVar();
     };
 
-    vector<MatchedTitle> DetailServerWindow(std::vector<MatchedTitle>,int idx);
+    vector<MatchedTitle> DetailServerWindow(std::vector<MatchedTitle>,int idx,ServerConfig myserverconfig);
 }
 
 #endif

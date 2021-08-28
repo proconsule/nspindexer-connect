@@ -27,7 +27,7 @@ Tex dummyNSZ;
 Tex dummyXCI;
 Tex dummyXCZ;
 
-//#define DEBUG_NXLINK
+#define DEBUG_NXLINK
 
 using namespace std;
 const GLuint WIDTH = 1280, HEIGHT = 720;
@@ -100,7 +100,7 @@ bool TxtLoadFromFile(std::string filename, GLuint* out_texture, int* out_width, 
 	// Reading data to array of unsigned chars
 	file = fopen(filename.c_str(), "r");
 	unsigned char * in = (unsigned char *) malloc(size);
-	int bytes_read = fread(in, sizeof(unsigned char), size, file);
+	fread(in, sizeof(unsigned char), size, file);
 	
 	
 	
@@ -388,7 +388,7 @@ int main() {
 				}
 			}
 			
-			myservertitles->matchedtitles = DetailWindows::DetailServerWindow(myservertitles->matchedtitles,detailidx);
+			myservertitles->matchedtitles = DetailWindows::DetailServerWindow(myservertitles->matchedtitles,detailidx,myservertitles->myserverconfig);
 			detailidx = Windows::LocaltoServerWindow(myservertitles->matchedtitles,focusonMain);
 			
 			

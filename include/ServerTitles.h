@@ -17,6 +17,12 @@ using namespace std;
 using namespace rapidjson;
 
 
+struct ServerConfig{
+	std::string version;
+	std::string contentUrl;
+	bool enableRomInfo;
+};
+
 struct ServerTitle{
 	u64 app_id;
 	std::string titleText;
@@ -34,6 +40,7 @@ struct MatchedTitle{
 	std::string serverFileType;
 	bool isSwitch = false;
 	bool isServer = false;
+	bool server_rominfo = false;
 	int switch_version = 0;
 	std::vector<string> server_filePaths;
 	std::vector<int> server_versions;
@@ -48,6 +55,7 @@ class ServerTitles{
 public:
 
 	ServerTitles(char* jsondata,char * serverconfigjsondata);
+	ServerConfig myserverconfig;
 	vector<ServerTitle> mytitles;
 	vector<MatchedTitle> matchedtitles;
 	void Match(vector<Title> switchtitles,int filter = 0);

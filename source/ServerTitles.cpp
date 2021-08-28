@@ -22,7 +22,6 @@ ServerTitles::ServerTitles(char * jsondata,char * serverconfigjsondata){
 		const Value& thistitleupdates = thistitle["updates"];
 		myservertitle.titleText = thistitle["name"].GetString();
 		myservertitle.serverFileType = thistitle["fileType"].GetString();
-		printf("%s\r\n",myservertitle.titleText.c_str());
 		const rapidjson::Value& lastlive_Value = thistitle["latest_version"];
 		if( lastlive_Value.IsNull() )
 		{
@@ -45,6 +44,12 @@ ServerTitles::ServerTitles(char * jsondata,char * serverconfigjsondata){
 		mytitles.push_back(myservertitle);
 		
 	}
+	Document config_document;
+    config_document.Parse(serverconfigjsondata);
+	myserverconfig.version = config_document["version"].GetString();
+	myserverconfig.contentUrl = config_document["contentUrl"].GetString();
+	myserverconfig.enableRomInfo = config_document["enableRomInfo"].GetBool();
+	
 
 }
 

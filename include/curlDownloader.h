@@ -1,4 +1,6 @@
-// Include the most common headers from the C standard library
+#ifndef CURLDOWNLOADER_H
+#define CURLDOWNLOADER_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,3 +29,5 @@ public:
 
 
 };
+
+#endif

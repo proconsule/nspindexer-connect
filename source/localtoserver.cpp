@@ -124,7 +124,7 @@ namespace DetailWindows {
 		ImGui::Dummy(ImVec2(0.0f, 5.0f)); // Spacing
 	}
 
-	vector<MatchedTitle> DetailServerWindow(vector<MatchedTitle> mytitles,int idx) {
+	vector<MatchedTitle> DetailServerWindow(vector<MatchedTitle> mytitles,int idx,ServerConfig myserverconfig) {
 		DetailWindows::SetupWindow();
 		
 		if (ImGui::Begin("Details", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse) && idx<(int)mytitles.size()) {
