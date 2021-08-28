@@ -21,6 +21,7 @@ ServerTitles::ServerTitles(char * jsondata,char * serverconfigjsondata){
 		const Value& thistitle = titlesarray[mytitlekey.c_str()];
 		const Value& thistitleupdates = thistitle["updates"];
 		myservertitle.titleText = thistitle["name"].GetString();
+		myservertitle.serverFileType = thistitle["fileType"].GetString();
 		printf("%s\r\n",myservertitle.titleText.c_str());
 		const rapidjson::Value& lastlive_Value = thistitle["latest_version"];
 		if( lastlive_Value.IsNull() )
@@ -53,6 +54,7 @@ void ServerTitles::Match(vector<Title> switchtitles,int filter){
 		tmpmatched.app_id = mytitles[i].app_id;
 		tmpmatched.titleText = mytitles[i].titleText;
 		tmpmatched.isServer = true;
+		tmpmatched.serverFileType = mytitles[i].serverFileType;
 		tmpmatched.server_versions = mytitles[i].versions;
 		tmpmatched.lastlive_version = mytitles[i].lastliveversion;
 		matchedtitles.push_back(tmpmatched);
@@ -103,6 +105,16 @@ void ServerTitles::Match(vector<Title> switchtitles,int filter){
 			}
 			if(filter == 3){
 				if(matchedtitles[n].isServer && !matchedtitles[n].isSwitch){
+					filteredTitles.push_back(matchedtitles[n]);
+				}
+			}
+			if(filter == 4){
+				if(matchedtitles[n].isServer && !matchedtitles[n].isSwitch && matchedtitles[n].server_versions.back()<matchedtitles[n].lastlive_version){
+					filteredTitles.push_back(matchedtitles[n]);
+				}
+			}
+			if(filter == 5){
+				if(matchedtitles[n].isServer && matchedtitles[n].isSwitch && matchedtitles[n].switch_version<matchedtitles[n].server_versions.back()){
 					filteredTitles.push_back(matchedtitles[n]);
 				}
 			}

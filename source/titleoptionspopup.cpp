@@ -33,16 +33,24 @@ namespace Popups {
 				retval = 0;
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Only present on Both", ImVec2(200, 50))) {
+			if (ImGui::Button("On Both", ImVec2(200, 50))) {
 				retval = 1;
 			}
 			Separator();
-			if (ImGui::Button("Only present on Switch", ImVec2(200, 50))) {
+			if (ImGui::Button("On Switch", ImVec2(200, 50))) {
 				retval = 2;
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Only present on Server", ImVec2(200, 50))) {
+			if (ImGui::Button("On Switch need update", ImVec2(200, 50))) {
+				retval = 5;
+			}
+			Separator();
+			if (ImGui::Button("On Server", ImVec2(200, 50))) {
 				retval = 3;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("On Server need update", ImVec2(200, 50))) {
+				retval = 4;
 			}
 		
 		

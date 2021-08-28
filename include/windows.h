@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include <vector>
 #include <string>
+#include "globals.h"
 #include "TitleManager.h"
 #include "ServerTitles.h"
 

@@ -19,6 +19,13 @@
 #include "TitleManager.h"
 #include "curlDownloader.h"
 #include "ServerTitles.h"
+#include "globals.h"
+
+
+Tex dummyNSP;
+Tex dummyNSZ;
+Tex dummyXCI;
+Tex dummyXCZ;
 
 //#define DEBUG_NXLINK
 
@@ -81,6 +88,63 @@ static bool init() {
     }
     return success;
 }
+
+bool TxtLoadFromFile(std::string filename, GLuint* out_texture, int* out_width, int* out_height)
+{
+	
+	FILE * file = fopen(filename.c_str(), "r");
+	if (file == NULL) return false;
+	fseek(file, 0, SEEK_END);
+	long int size = ftell(file);
+	fclose(file);
+	// Reading data to array of unsigned chars
+	file = fopen(filename.c_str(), "r");
+	unsigned char * in = (unsigned char *) malloc(size);
+	int bytes_read = fread(in, sizeof(unsigned char), size, file);
+	
+	
+	
+    int image_width = 0;
+    int image_height = 0;
+    if (in == NULL){
+        return false;
+	}
+		
+	int jpegSubsamp;
+	int _jpegSize = 0x20000;
+	
+	tjhandle _jpegDecompressor = tjInitDecompress();
+
+	tjDecompressHeader2(_jpegDecompressor, in, _jpegSize, &image_width, &image_height, &jpegSubsamp);
+
+	unsigned char buffer[image_width*image_height*3];
+
+	tjDecompress2(_jpegDecompressor, in, _jpegSize, buffer, image_width, 0/*pitch*/, image_height, TJPF_RGB,  TJFLAG_FASTDCT);
+
+	tjDestroy(_jpegDecompressor);
+
+	GLuint id = 0;
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
+		
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image_width, image_height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
+    
+
+    *out_texture = id;
+    *out_width = image_width;
+    *out_height = image_height;
+	
+	fclose(file);
+	free(in);
+
+    return true;
+}
+
+
 int main() {
 	
 	
@@ -261,6 +325,13 @@ int main() {
 		io.Fonts->GetTexDataAsAlpha8(&pixels, &width, &height, &bpp);
 		io.Fonts->Flags |= ImFontAtlasFlags_NoPowerOfTwoHeight;
 		io.Fonts->Build();
+		
+		
+		TxtLoadFromFile("romfs:/dummy-nsp.jpg",&dummyNSP.id,&dummyNSP.width,&dummyNSP.height);
+		TxtLoadFromFile("romfs:/dummy-nsz.jpg",&dummyNSZ.id,&dummyNSZ.width,&dummyNSZ.height);
+		TxtLoadFromFile("romfs:/dummy-xci.jpg",&dummyXCI.id,&dummyXCI.width,&dummyXCI.height);
+		TxtLoadFromFile("romfs:/dummy-xcz.jpg",&dummyXCZ.id,&dummyXCZ.width,&dummyXCZ.height);
+		
 		
 		plExit();
 		romfsExit();

@@ -132,10 +132,25 @@ namespace DetailWindows {
 			if(mytitles[idx].icon !=  nullptr && mytitles[idx].isSwitch){
 				if(mytitles[idx].gltexture.id == 0){
 					LoadTextureFromMemory(mytitles[idx].icon,&mytitles[idx].gltexture.id,&mytitles[idx].gltexture.width,&mytitles[idx].gltexture.height);
-				}else{
+				}else {
 					ImGui::SetCursorPosX((windowWidth - 256) * 0.5f);
 					ImGui::Image((void*)(intptr_t)mytitles[idx].gltexture.id, ImVec2(mytitles[idx].gltexture.width,mytitles[idx].gltexture.height));
 				}
+			} else if (mytitles[idx].isServer && !mytitles[idx].isSwitch){
+				ImGui::SetCursorPosX((windowWidth - 256) * 0.5f);
+				if(mytitles[idx].serverFileType == "NSP"){
+					ImGui::Image((void*)(intptr_t)dummyNSP.id, ImVec2(dummyNSP.width,dummyNSP.height));
+				}
+				if(mytitles[idx].serverFileType == "NSZ"){
+					ImGui::Image((void*)(intptr_t)dummyNSZ.id, ImVec2(dummyNSZ.width,dummyNSZ.height));
+				}
+				if(mytitles[idx].serverFileType == "XCI"){
+					ImGui::Image((void*)(intptr_t)dummyXCI.id, ImVec2(dummyXCI.width,dummyXCI.height));
+				}
+				if(mytitles[idx].serverFileType == "XCZ"){
+					ImGui::Image((void*)(intptr_t)dummyXCZ.id, ImVec2(dummyXCZ.width,dummyXCZ.height));
+				}
+				
 			}
 			auto titleTextwidth   = ImGui::CalcTextSize(mytitles[idx].titleText.c_str()).x;
 			ImGui::SetCursorPosX((windowWidth - titleTextwidth) * 0.5f);

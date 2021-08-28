@@ -10,6 +10,7 @@
 #include "TitleManager.h"
 
 #include <glad/glad.h>
+#include "globals.h"
 
 
 using namespace std;
@@ -19,23 +20,18 @@ using namespace rapidjson;
 struct ServerTitle{
 	u64 app_id;
 	std::string titleText;
+	std::string serverFileType;
 	std::vector<int> versions;
 	int lastliveversion = 0;
 	std::vector<string> filePaths;
 	
 };
 
-typedef struct {
-    GLuint id = 0;
-    int width = 0;
-    int height = 0;
-} Tex;
-
-
 struct MatchedTitle{
 	u64 app_id;
 	std::string titleText;
 	std::string authorText;
+	std::string serverFileType;
 	bool isSwitch = false;
 	bool isServer = false;
 	int switch_version = 0;
