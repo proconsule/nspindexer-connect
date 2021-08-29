@@ -32,46 +32,49 @@ ServerTitles::ServerTitles(){
 	
 }
 
-void ServerTitles::GetServerTitles(char * jsondata){
+bool ServerTitles::GetServerTitles(char * jsondata){
 
     Document d;
     d.Parse(jsondata);
-	
-	const Value& titlesarray = d["titles"];
-	for (Value::ConstMemberIterator iter = titlesarray.MemberBegin(); iter != titlesarray.MemberEnd(); ++iter){
-		ServerTitle myservertitle;
-		myservertitle.app_id = strtoul(iter->name.GetString(), NULL, 16);
-		string mytitlekey =  iter->name.GetString();
-		const Value& thistitle = titlesarray[mytitlekey.c_str()];
-		const Value& thistitleupdates = thistitle["updates"];
-		myservertitle.titleText = thistitle["name"].GetString();
+	if(d.IsObject()){	
+		const Value& titlesarray = d["titles"];
+		for (Value::ConstMemberIterator iter = titlesarray.MemberBegin(); iter != titlesarray.MemberEnd(); ++iter){
+			ServerTitle myservertitle;
+			myservertitle.app_id = strtoul(iter->name.GetString(), NULL, 16);
+			string mytitlekey =  iter->name.GetString();
+			const Value& thistitle = titlesarray[mytitlekey.c_str()];
+			const Value& thistitleupdates = thistitle["updates"];
+			myservertitle.titleText = thistitle["name"].GetString();
 #ifdef DEBUG_NXLINK
-		printf("%s\n",myservertitle.titleText.c_str());
+			printf("%s\n",myservertitle.titleText.c_str());
 #endif
-		myservertitle.serverFileType = thistitle["fileType"].GetString();
-		const rapidjson::Value& lastlive_Value = thistitle["latest_version"];
-		if( lastlive_Value.IsNull() )
-		{
-			myservertitle.lastliveversion = 0;
-		}else if ( lastlive_Value.IsString() ){
-		    myservertitle.lastliveversion = atoi(thistitle["latest_version"].GetString());
-		}else{
-			myservertitle.lastliveversion = thistitle["latest_version"].GetInt();
-		}
-		
-		myservertitle.versions.push_back(0);
-		myservertitle.filePaths.push_back(thistitle["path"].GetString());
-		if(thistitleupdates.IsObject()){
-			for (Value::ConstMemberIterator itr = thistitle["updates"].MemberBegin(); itr != thistitle["updates"].MemberEnd(); ++itr){
-				myservertitle.versions.push_back(atoi(itr->name.GetString()));
-				myservertitle.filePaths.push_back(thistitleupdates[itr->name.GetString()]["path"].GetString());
+			myservertitle.serverFileType = thistitle["fileType"].GetString();
+			const rapidjson::Value& lastlive_Value = thistitle["latest_version"];
+			if( lastlive_Value.IsNull() )
+			{
+				myservertitle.lastliveversion = 0;
+			}else if ( lastlive_Value.IsString() ){
+				myservertitle.lastliveversion = atoi(thistitle["latest_version"].GetString());
+			}else{
+				myservertitle.lastliveversion = thistitle["latest_version"].GetInt();
 			}
+		
+			myservertitle.versions.push_back(0);
+			myservertitle.filePaths.push_back(thistitle["path"].GetString());
+			if(thistitleupdates.IsObject()){
+				for (Value::ConstMemberIterator itr = thistitle["updates"].MemberBegin(); itr != thistitle["updates"].MemberEnd(); ++itr){
+					myservertitle.versions.push_back(atoi(itr->name.GetString()));
+					myservertitle.filePaths.push_back(thistitleupdates[itr->name.GetString()]["path"].GetString());
+				}
+			}
+		
+			mytitles.push_back(myservertitle);
+		
 		}
-		
-		mytitles.push_back(myservertitle);
-		
+	}else{
+		return false;
 	}
-
+	return true;
 }
 
 void ServerTitles::Match(vector<Title> switchtitles,int filter){
@@ -83,6 +86,7 @@ void ServerTitles::Match(vector<Title> switchtitles,int filter){
 		tmpmatched.serverFileType = mytitles[i].serverFileType;
 		tmpmatched.server_versions = mytitles[i].versions;
 		tmpmatched.lastlive_version = mytitles[i].lastliveversion;
+		tmpmatched.server_filePaths = mytitles[i].filePaths;
 		matchedtitles.push_back(tmpmatched);
 	}
 	
@@ -94,6 +98,7 @@ void ServerTitles::Match(vector<Title> switchtitles,int filter){
 				matchedtitles[n].isSwitch = true;
 				matchedtitles[n].switch_version = switchtitles[i].lastversion;
 				matchedtitles[n].icon = switchtitles[i].icon;
+				matchedtitles[n].iconsize = 0x20000;
 				tmpswitchapp_id = matchedtitles[n].app_id;
 				break;
 			}
@@ -107,6 +112,7 @@ void ServerTitles::Match(vector<Title> switchtitles,int filter){
 			tmpmatched.isSwitch = true;
 			tmpmatched.switch_version  = switchtitles[i].lastversion;
 			tmpmatched.icon = switchtitles[i].icon;
+			tmpmatched.iconsize = 0x20000;
 			matchedtitles.push_back(tmpmatched);
 		}
 		

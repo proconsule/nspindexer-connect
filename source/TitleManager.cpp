@@ -80,7 +80,7 @@ u64 TitleManager::GetBaseApplicationId(u64 app_id, NcmContentMetaType type) {
 }
 
 
-vector<Title> TitleManager::SearchTitles(NcmContentMetaType type, NcmStorageId storage_id) {
+void TitleManager::SearchTitles(NcmContentMetaType type, NcmStorageId storage_id) {
         std::vector<Title> titles;
         NcmContentMetaDatabase cnt_meta_db = {};
         if(R_SUCCEEDED(ncmOpenContentMetaDatabase(&cnt_meta_db, storage_id))) {
@@ -104,16 +104,15 @@ vector<Title> TitleManager::SearchTitles(NcmContentMetaType type, NcmStorageId s
             ncmContentMetaDatabaseClose(&cnt_meta_db);
         }
 		
-		std::vector<Title> finaltitlelist;
 		for(auto &cnt: titles) {
             bool ok = true;
-            for(int i=0;i<(int)finaltitlelist.size();i++) {
+            for(int i=0;i<(int)mytitles.size();i++) {
                 auto cnt_base_app_id = GetBaseApplicationId(cnt.app_id, cnt.type);
-                auto cur_cnt_base_app_id = GetBaseApplicationId(finaltitlelist[i].app_id, finaltitlelist[i].type);
+                auto cur_cnt_base_app_id = GetBaseApplicationId(mytitles[i].app_id, mytitles[i].type);
 
                 if(cnt_base_app_id == cur_cnt_base_app_id) {
 					if(isUpdate(&cnt)){
-						finaltitlelist[i].lastversion = cnt.lastversion;
+						mytitles[i].lastversion = cnt.lastversion;
 					}
                     ok = false;
                     break;
@@ -130,11 +129,11 @@ vector<Title> TitleManager::SearchTitles(NcmContentMetaType type, NcmStorageId s
 				tmpTitle.lastversion = cnt.lastversion;
 				tmpTitle.type = cnt.type;
 				tmpTitle.icon = TryGetIcon(&cnt);
-            finaltitlelist.push_back(tmpTitle);
+            mytitles.push_back(tmpTitle);
             }
         }
 		
 		
 		
-        return finaltitlelist;
+       
     }

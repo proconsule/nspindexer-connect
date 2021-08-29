@@ -27,6 +27,8 @@ Tex dummyNSZ;
 Tex dummyXCI;
 Tex dummyXCZ;
 
+char* serverUrl;
+
 
 using namespace std;
 const GLuint WIDTH = 1280, HEIGHT = 720;
@@ -176,8 +178,8 @@ int main() {
 				consoleExit(NULL);
 				return 0;
 		};
-		const char* serverUrl;
-		serverUrl = ini.GetValue("Main", "serveraddress", "default");
+		
+		serverUrl = (char *)ini.GetValue("Main", "serveraddress", "default");
 		
 	
     
@@ -200,8 +202,10 @@ int main() {
 		printf("Getting Titles installed\n");
 		
 		TitleManager *mytitlemanager = new TitleManager();
-		vector<Title> mytitles = mytitlemanager->SearchTitles(NcmContentMetaType_Unknown,NcmStorageId_SdCard);
-		printf("Titles found: %ld\n",mytitles.size());
+		mytitlemanager->SearchTitles(NcmContentMetaType_Unknown,NcmStorageId_SdCard);
+		mytitlemanager->SearchTitles(NcmContentMetaType_Unknown,NcmStorageId_BuiltInUser);
+		//mytitlemanager->SearchTitles(NcmContentMetaType_Unknown,NcmStorageId_SdCard);
+		printf("Titles found: %ld\n",mytitlemanager->mytitles.size());
 		curlDownloader *mycurl = nullptr;
 		curlDownloader *mycurl_serverconfig = nullptr;
 	    ServerTitles* myservertitles = nullptr;
@@ -264,7 +268,7 @@ int main() {
 			
 		}
 		myservertitles->GetServerTitles(mycurl->chunk.memory);
-		myservertitles->Match(mytitles);
+		myservertitles->Match(mytitlemanager->mytitles);
 		if(okdownload){
 			printf("Server info downloaded successful\n");
 		}else
@@ -407,7 +411,7 @@ int main() {
 					exit=1;
 				}
 				myservertitles->GetServerTitles(mycurl->chunk.memory);
-				myservertitles->Match(mytitles);
+				myservertitles->Match(mytitlemanager->mytitles);
 			}
 			focusonMain = true;
 			if(showMainOptionPopup){
@@ -415,7 +419,7 @@ int main() {
 				int tmptitlefilter = Popups::MainOptionsPopup(titlefilter);
 				if( tmptitlefilter != titlefilter){
 					myservertitles->matchedtitles.clear();
-					myservertitles->Match(mytitles,tmptitlefilter);
+					myservertitles->Match(mytitlemanager->mytitles,tmptitlefilter);
 					titlefilter = tmptitlefilter;
 				}
 			}

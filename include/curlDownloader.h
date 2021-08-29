@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+#include <vector>
 
 // Include the main libnx system header, for Switch development
 #include <switch.h>
@@ -25,7 +26,7 @@ public:
 	bool download(string url);
 
 	struct MemoryStruct chunk;
-
+	string urlencode(string url);
 
 
 };

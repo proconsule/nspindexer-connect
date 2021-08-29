@@ -11,6 +11,7 @@ typedef struct {
     int height = 0;
 } Tex;
 
+extern char* serverUrl;
 
 extern Tex dummyNSP;
 extern Tex dummyNSZ;

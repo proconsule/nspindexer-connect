@@ -33,6 +33,12 @@ struct ServerTitle{
 	
 };
 
+struct struct_extended_Serverinfo{
+	bool valid = false;
+	std::string sdk;
+	
+};
+
 struct MatchedTitle{
 	u64 app_id;
 	std::string titleText;
@@ -44,8 +50,10 @@ struct MatchedTitle{
 	int switch_version = 0;
 	std::vector<string> server_filePaths;
 	std::vector<int> server_versions;
+	struct_extended_Serverinfo extended_serverinfo;
 	int lastlive_version = 0;
-	u8 * icon;
+	u8 * icon = nullptr;
+	unsigned long iconsize = 0;
 	Tex gltexture;
 	
 	
@@ -57,7 +65,7 @@ public:
 	
 	ServerTitles();
 	bool GetSeverConfig(char *jsondata);
-	void GetServerTitles(char * jsondata);
+	bool GetServerTitles(char * jsondata);
 	ServerConfig myserverconfig;
 	vector<ServerTitle> mytitles;
 	vector<MatchedTitle> matchedtitles;

@@ -39,14 +39,14 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	libs/imgui libs/imgui/misc/freetype source
+SOURCES		:=	libs/b64 libs/imgui libs/imgui/misc/freetype source
 DATA		:=	data
-INCLUDES	:=	libs/simpleini libs/imgui libs/rapidjson include
+INCLUDES	:=	libs/b64 libs/simpleini libs/imgui libs/rapidjson include
 ROMFS		:=	romfs
 
 VERSION_MAJOR := 0
-VERSION_MINOR := 1
-VERSION_MICRO := 2
+VERSION_MINOR := 2
+VERSION_MICRO := 0
 
 APP_TITLE     := NSP Indexer Connect
 APP_AUTHOR    := proconsule
@@ -65,7 +65,7 @@ CFLAGS	+=	$(INCLUDE) -D__SWITCH__
 
 CFLAGS  +=      -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DVERSION_MICRO=$(VERSION_MICRO)
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -DIMGUI_IMPL_OPENGL_LOADER_GLAD \
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fexceptions -DIMGUI_IMPL_OPENGL_LOADER_GLAD \
 		-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS -DIMGUI_ENABLE_FREETYPE
 
 ASFLAGS	:=	-g $(ARCH)

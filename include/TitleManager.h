@@ -42,8 +42,9 @@ public:
 	u8 *TryGetIcon(Title *mytitle);
 	string FindNacpName(NacpStruct nacp);
 	string FindNacpPublisher(NacpStruct nacp);
-	vector<Title> SearchTitles(NcmContentMetaType type, NcmStorageId storage_id);
+	void SearchTitles(NcmContentMetaType type, NcmStorageId storage_id);
 	string FormatApplicationId(u64 app_id);
+	vector<Title> mytitles;
 	
 
 

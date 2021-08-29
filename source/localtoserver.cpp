@@ -3,13 +3,19 @@
 #include <vector>
 #include <string>
 
+
+
+#include "b64.h"
+
 #include <glad/glad.h>
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
 
 using namespace std;
 
-bool LoadTextureFromMemory(unsigned char* image_data, GLuint* out_texture, int* out_width, int* out_height)
+
+
+bool LoadTextureFromMemory(unsigned char* image_data,unsigned long _jpegSize, GLuint* out_texture, int* out_width, int* out_height)
 {
     // Load from file
     int image_width = 0;
@@ -19,16 +25,17 @@ bool LoadTextureFromMemory(unsigned char* image_data, GLuint* out_texture, int* 
 	}
 		
 	int jpegSubsamp;
-	int _jpegSize = 0x20000;
+	
 	
 	tjhandle _jpegDecompressor = tjInitDecompress();
 
 	tjDecompressHeader2(_jpegDecompressor, image_data, _jpegSize, &image_width, &image_height, &jpegSubsamp);
-
+	
 	unsigned char buffer[image_width*image_height*3];
 
 	tjDecompress2(_jpegDecompressor, image_data, _jpegSize, buffer, image_width, 0/*pitch*/, image_height, TJPF_RGB,  TJFLAG_FASTDCT);
 
+	
 	tjDestroy(_jpegDecompressor);
 
 	GLuint id = 0;
@@ -131,26 +138,59 @@ namespace DetailWindows {
 			auto windowWidth = ImGui::GetWindowSize().x;
 			if(mytitles[idx].icon !=  nullptr && mytitles[idx].isSwitch){
 				if(mytitles[idx].gltexture.id == 0){
-					LoadTextureFromMemory(mytitles[idx].icon,&mytitles[idx].gltexture.id,&mytitles[idx].gltexture.width,&mytitles[idx].gltexture.height);
+					LoadTextureFromMemory(mytitles[idx].icon,mytitles[idx].iconsize,&mytitles[idx].gltexture.id,&mytitles[idx].gltexture.width,&mytitles[idx].gltexture.height);
 				}else {
 					ImGui::SetCursorPosX((windowWidth - 256) * 0.5f);
 					ImGui::Image((void*)(intptr_t)mytitles[idx].gltexture.id, ImVec2(mytitles[idx].gltexture.width,mytitles[idx].gltexture.height));
 				}
-			} else if (mytitles[idx].isServer && !mytitles[idx].isSwitch){
-				ImGui::SetCursorPosX((windowWidth - 256) * 0.5f);
-				if(mytitles[idx].serverFileType == "NSP"){
-					ImGui::Image((void*)(intptr_t)dummyNSP.id, ImVec2(dummyNSP.width,dummyNSP.height));
-				}
-				if(mytitles[idx].serverFileType == "NSZ"){
-					ImGui::Image((void*)(intptr_t)dummyNSZ.id, ImVec2(dummyNSZ.width,dummyNSZ.height));
-				}
-				if(mytitles[idx].serverFileType == "XCI"){
-					ImGui::Image((void*)(intptr_t)dummyXCI.id, ImVec2(dummyXCI.width,dummyXCI.height));
-				}
-				if(mytitles[idx].serverFileType == "XCZ"){
-					ImGui::Image((void*)(intptr_t)dummyXCZ.id, ImVec2(dummyXCZ.width,dummyXCZ.height));
+			} 
+			if (!mytitles[idx].server_rominfo && mytitles[idx].isServer){
+				if(myserverconfig.enableRomInfo && mytitles[idx].server_rominfo == false){ 
+					curlDownloader * tmpcurl = new curlDownloader();
+					std::string tmpfilepath = string(serverUrl)+"?rominfo=" + tmpcurl->urlencode(mytitles[idx].server_filePaths.front());
+					
+					bool okdownload = tmpcurl->download(tmpfilepath);
+					Document d;
+					d.Parse(tmpcurl->chunk.memory);
+					if(d.IsObject()){
+						if(!d.HasMember("int")){
+							if(!mytitles[idx].isSwitch){
+								string gameiconString = d["gameIcon"].GetString();
+								mytitles[idx].icon = b64_decode_ex(gameiconString.c_str(),gameiconString.size(),&mytitles[idx].iconsize);
+							}
+							mytitles[idx].extended_serverinfo.valid = true;
+							mytitles[idx].authorText = d["publisher"].GetString();
+							mytitles[idx].extended_serverinfo.sdk = d["sdk"].GetString();
+						}
+						
+					}
+					
+					mytitles[idx].server_rominfo = true;
+					delete tmpcurl;
+					
+				}else{
+					ImGui::SetCursorPosX((windowWidth - 256) * 0.5f);
+					if(mytitles[idx].serverFileType == "NSP"){
+						ImGui::Image((void*)(intptr_t)dummyNSP.id, ImVec2(dummyNSP.width,dummyNSP.height));
+					}
+					if(mytitles[idx].serverFileType == "NSZ"){
+						ImGui::Image((void*)(intptr_t)dummyNSZ.id, ImVec2(dummyNSZ.width,dummyNSZ.height));
+					}
+					if(mytitles[idx].serverFileType == "XCI"){
+						ImGui::Image((void*)(intptr_t)dummyXCI.id, ImVec2(dummyXCI.width,dummyXCI.height));
+					}
+					if(mytitles[idx].serverFileType == "XCZ"){
+						ImGui::Image((void*)(intptr_t)dummyXCZ.id, ImVec2(dummyXCZ.width,dummyXCZ.height));
+					}
 				}
 				
+			}else if(mytitles[idx].icon !=  nullptr && mytitles[idx].isServer && !mytitles[idx].isSwitch){
+				if(mytitles[idx].gltexture.id == 0){
+					LoadTextureFromMemory(mytitles[idx].icon,mytitles[idx].iconsize,&mytitles[idx].gltexture.id,&mytitles[idx].gltexture.width,&mytitles[idx].gltexture.height);
+				}else {
+					ImGui::SetCursorPosX((windowWidth - 256) * 0.5f);
+					ImGui::Image((void*)(intptr_t)mytitles[idx].gltexture.id, ImVec2(mytitles[idx].gltexture.width,mytitles[idx].gltexture.height));
+				}
 			}
 			auto titleTextwidth   = ImGui::CalcTextSize(mytitles[idx].titleText.c_str()).x;
 			ImGui::SetCursorPosX((windowWidth - titleTextwidth) * 0.5f);
@@ -206,7 +246,12 @@ namespace DetailWindows {
 				ImGui::Text("Live Version: ");
 				ImGui::SameLine();
 				ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].lastlive_version).c_str());
-			
+				
+			}
+			if(mytitles[idx].extended_serverinfo.valid){
+					Separator();
+					ImGui::Text("Extended info (Server Decryption)");
+					ImGui::Text("SDK: %s",mytitles[idx].extended_serverinfo.sdk.c_str());
 			}
 		
 		}
