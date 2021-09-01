@@ -13,7 +13,7 @@
 namespace Windows {
     inline void SetupWindow(void) {
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(880.0f, 720.0f), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(880.0f, 620.0f), ImGuiCond_Once);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     };
 
@@ -39,6 +39,21 @@ namespace DetailWindows {
     };
 
     vector<MatchedTitle> DetailServerWindow(std::vector<MatchedTitle>,int idx,ServerConfig myserverconfig);
+}
+
+namespace FooterWindows {
+    inline void SetupWindow(void) {
+        ImGui::SetNextWindowPos(ImVec2(0.0f, 620.0f), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(880.0f, 100.0f), ImGuiCond_Once);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    };
+
+    inline void ExitWindow(void) {
+        ImGui::End();
+        ImGui::PopStyleVar();
+    };
+
+    void FooterWindow();
 }
 
 #endif

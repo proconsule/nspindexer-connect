@@ -18,7 +18,7 @@ using namespace rapidjson;
 
 
 struct ServerConfig{
-	float version;
+	float version = 0.0;
 	std::string contentUrl;
 	bool enableRomInfo;
 };
@@ -30,12 +30,14 @@ struct ServerTitle{
 	std::vector<int> versions;
 	int lastliveversion = 0;
 	std::vector<string> filePaths;
+	u64 basegame_size;
 	
 };
 
 struct struct_extended_Serverinfo{
 	bool valid = false;
 	std::string sdk;
+	std::string humanversion;
 	
 };
 
@@ -48,6 +50,10 @@ struct MatchedTitle{
 	bool isServer = false;
 	bool server_rominfo = false;
 	int switch_version = 0;
+	u64 sd_size = 0;
+	u64 nand_size = 0;
+	string switch_humanversion;
+	u64 server_basegame_size;
 	std::vector<string> server_filePaths;
 	std::vector<int> server_versions;
 	struct_extended_Serverinfo extended_serverinfo;

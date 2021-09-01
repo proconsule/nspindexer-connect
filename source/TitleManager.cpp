@@ -56,6 +56,11 @@ string TitleManager::FindNacpName(NacpStruct nacp) {
         return string("");
 }
 
+string TitleManager::FindHumanVersion(NacpStruct nacp) {
+		return string(nacp.display_version);
+}
+
+
 string TitleManager::FindNacpPublisher(NacpStruct nacp) {
         NacpLanguageEntry *lang_entry;
         nacpGetLanguageEntry(const_cast<NacpStruct*>(std::addressof(nacp)), &lang_entry);
@@ -64,6 +69,8 @@ string TitleManager::FindNacpPublisher(NacpStruct nacp) {
         }
         return string("");
 }
+
+
 
 u64 TitleManager::GetBaseApplicationId(u64 app_id, NcmContentMetaType type) {
         switch(type) {
@@ -109,10 +116,14 @@ void TitleManager::SearchTitles(NcmContentMetaType type, NcmStorageId storage_id
             for(int i=0;i<(int)mytitles.size();i++) {
                 auto cnt_base_app_id = GetBaseApplicationId(cnt.app_id, cnt.type);
                 auto cur_cnt_base_app_id = GetBaseApplicationId(mytitles[i].app_id, mytitles[i].type);
-
+				
                 if(cnt_base_app_id == cur_cnt_base_app_id) {
 					if(isUpdate(&cnt)){
 						mytitles[i].lastversion = cnt.lastversion;
+						mytitles[i].update_humanversion = FindHumanVersion(TryGetNACP(&cnt));
+						
+					
+					
 					}
                     ok = false;
                     break;
@@ -129,7 +140,39 @@ void TitleManager::SearchTitles(NcmContentMetaType type, NcmStorageId storage_id
 				tmpTitle.lastversion = cnt.lastversion;
 				tmpTitle.type = cnt.type;
 				tmpTitle.icon = TryGetIcon(&cnt);
+				tmpTitle.update_humanversion = FindHumanVersion(TryGetNACP(&cnt));
+				
+				ApplicationOccupiedSize size{};
+						auto result = nsCalculateApplicationOccupiedSize(cnt.app_id, (NsApplicationOccupiedSize*)&size);
+						if (R_FAILED(result)) {
+							printf("failed to get application occupied size for ID %lX\n", tmpTitle.app_id);
+							tmpTitle.nand_size = tmpTitle.sd_size = 0;
+						} else {
+							auto fill_size = [&](const ApplicationOccupiedSizeEntry& e) {
+								switch (e.storageId) {
+                                case NcmStorageId_BuiltInUser:
+										tmpTitle.nand_size = e.sizeApplication + e.sizeAddOnContent + e.sizePatch;
+										break;
+                                case NcmStorageId_SdCard:
+                                    tmpTitle.sd_size = e.sizeApplication + e.sizeAddOnContent + e.sizePatch;
+                                    break;
+								default:
+                                    assert(0 && "unk ncm storageID when getting size!");
+                                    break;
+								}
+							};
+							// unsure if the order of the storageID will always be nand then sd.
+							// because of this, i manually check using a switch (for now).
+							fill_size(size.entry[0]);
+							fill_size(size.entry[1]);
+							//entry.size_total = entry.size_nand + entry.size_sd;
+						}
+				
+
             mytitles.push_back(tmpTitle);
+#ifdef DEBUG_NXLINK
+			printf("%s %s %s\n",tmpTitle.titleText.c_str(),humanSize(tmpTitle.nand_size).c_str(),humanSize(tmpTitle.sd_size).c_str());
+#endif
             }
         }
 		

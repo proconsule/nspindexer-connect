@@ -15,6 +15,8 @@ using namespace std;
 
 
 
+
+
 bool LoadTextureFromMemory(unsigned char* image_data,unsigned long _jpegSize, GLuint* out_texture, int* out_width, int* out_height)
 {
     // Load from file
@@ -56,6 +58,39 @@ bool LoadTextureFromMemory(unsigned char* image_data,unsigned long _jpegSize, GL
     return true;
 }
 
+
+ImVec4 GetTitleColor(MatchedTitle thistitle){
+	if(thistitle.isServer && thistitle.isSwitch){
+		if(thistitle.switch_version < thistitle.server_versions.back()){
+				 return ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+		}else if(thistitle.switch_version >= thistitle.server_versions.back()){
+			if(thistitle.switch_version == thistitle.lastlive_version){
+				return ImVec4(0.0f, 1.0f, 0.0f, 1.0f);
+			}else{
+				return ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
+			}
+		}else if(thistitle.switch_version >= thistitle.server_versions.back()){
+				return ImVec4(0.0f, 1.0f, 1.0f, 1.0f);
+		}else{
+				return ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+					
+	}else if(thistitle.isServer){
+		if(thistitle.server_versions.back()<thistitle.lastlive_version){
+			return ImVec4(1.0f, 0.0f, 1.0f, 1.0f);
+		}else{
+			return ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+					
+	}else if(thistitle.isSwitch){
+		return ImVec4(0.5f, 0.5f, 0.5f, 0.7f);
+	}
+	
+	return ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+
+
 namespace Windows {
 	static std::string tag_name = std::string();
     
@@ -83,35 +118,22 @@ namespace Windows {
                     ImGui::SetItemDefaultFocus();
 				ImGui::SameLine(200.0f);
 				
+				ImGui::TextColored(GetTitleColor(mytitles[n]),u8"%s",mytitles[n].titleText.c_str());
+				
 				if(mytitles[n].isServer && mytitles[n].isSwitch){
-					if(mytitles[n].switch_version < mytitles[n].server_versions.back()){
-						ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f),u8"%s",mytitles[n].titleText.c_str());
-					}else if(mytitles[n].switch_version >= mytitles[n].server_versions.back()){
-						if(mytitles[n].switch_version == mytitles[n].lastlive_version){
-							ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f),u8"%s",mytitles[n].titleText.c_str());
-						}else{
-							ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f),u8"%s",mytitles[n].titleText.c_str());
-						}
-					}else if(mytitles[n].switch_version >= mytitles[n].server_versions.back()){
-						ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f),mytitles[n].titleText.c_str());
-					}else{
-						ImGui::Text(mytitles[n].titleText.c_str());
+					if(mytitles[n].nand_size != 0 || mytitles[n].sd_size != 0){
+						ImGui::SameLine(750.0f);
+						ImGui::TextColored(GetTitleColor(mytitles[n]),"%s",humanSize(mytitles[n].nand_size+mytitles[n].sd_size).c_str());
 					}
-					
-				}
-				else if(mytitles[n].isServer){
-					if(mytitles[n].server_versions.back()<mytitles[n].lastlive_version){
-						ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f),mytitles[n].titleText.c_str());
-					}else{
-						ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f),mytitles[n].titleText.c_str());
+                }else if(mytitles[n].isServer){
+					ImGui::SameLine(750.0f);
+					ImGui::TextColored(GetTitleColor(mytitles[n]),"%s",humanSize(mytitles[n].server_basegame_size).c_str());
+				}else if(mytitles[n].isSwitch){
+					if(mytitles[n].nand_size != 0 || mytitles[n].sd_size != 0){
+						ImGui::SameLine(750.0f);
+						ImGui::TextColored(GetTitleColor(mytitles[n]),"%s",humanSize(mytitles[n].nand_size+mytitles[n].sd_size).c_str());
 					}
-					
 				}
-				else if(mytitles[n].isSwitch){
-					ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 0.7f),mytitles[n].titleText.c_str());
-					
-				}
-                
             }
             ImGui::EndListBox();
         }
@@ -147,7 +169,7 @@ namespace DetailWindows {
 			if (!mytitles[idx].server_rominfo && mytitles[idx].isServer){
 				if(myserverconfig.enableRomInfo && mytitles[idx].server_rominfo == false){ 
 					curlDownloader * tmpcurl = new curlDownloader();
-					std::string tmpfilepath = string(serverUrl)+"?rominfo=" + tmpcurl->urlencode(mytitles[idx].server_filePaths.front());
+					std::string tmpfilepath = string(serverUrl)+"?rominfo=" + tmpcurl->urlencode(mytitles[idx].server_filePaths.back());
 					
 					bool okdownload = tmpcurl->download(tmpfilepath);
 					Document d;
@@ -161,6 +183,7 @@ namespace DetailWindows {
 							mytitles[idx].extended_serverinfo.valid = true;
 							mytitles[idx].authorText = d["publisher"].GetString();
 							mytitles[idx].extended_serverinfo.sdk = d["sdk"].GetString();
+							mytitles[idx].extended_serverinfo.humanversion = d["humanVersion"].GetString();
 						}
 						
 					}
@@ -209,44 +232,61 @@ namespace DetailWindows {
 				ImGui::Text("Switch Version: ");
 				ImGui::SameLine();
 				if(mytitles[idx].switch_version<mytitles[idx].server_versions.back()){
-					ImGui::TextColored(ImVec4(1.0f,0.0f,0.0f,1.0f),std::to_string(mytitles[idx].switch_version).c_str());
+					ImGui::TextColored(ImVec4(1.0f,0.0f,0.0f,1.0f),"%d (%s)",mytitles[idx].switch_version,mytitles[idx].switch_humanversion.c_str());
 				}else if(mytitles[idx].switch_version>=mytitles[idx].server_versions.back()){
 					if(mytitles[idx].switch_version<mytitles[idx].lastlive_version){
-						ImGui::TextColored(ImVec4(1.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].switch_version).c_str());	
+						ImGui::TextColored(ImVec4(1.0f,1.0f,0.0f,1.0f),"%d (%s)",mytitles[idx].switch_version,mytitles[idx].switch_humanversion.c_str());	
 					}else{
-						ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].switch_version).c_str());
+						ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),"%d (%s)",mytitles[idx].switch_version,mytitles[idx].switch_humanversion.c_str());
 					}
 				}
 				ImGui::Text("Server Version: ");
 				ImGui::SameLine();
 				if(mytitles[idx].server_versions.back()<mytitles[idx].lastlive_version){
-					ImGui::TextColored(ImVec4(1.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
+					if(mytitles[idx].extended_serverinfo.valid){
+						ImGui::TextColored(ImVec4(1.0f,1.0f,0.0f,1.0f),"%d (%s)",mytitles[idx].server_versions.back(),mytitles[idx].extended_serverinfo.humanversion.c_str());	
+					}else{
+						ImGui::TextColored(ImVec4(1.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());		
+					}
 				}else{
-					ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
+					if(mytitles[idx].extended_serverinfo.valid){
+						ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),"%d (%s)",mytitles[idx].server_versions.back(),mytitles[idx].extended_serverinfo.humanversion.c_str());
+					}else{
+						ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
+					}
+					
 					
 				}
 				ImGui::Text("Live Version: ");
 				ImGui::SameLine();
 				ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].lastlive_version).c_str());
+				ImGui::Text("Server File Type (Basegame): %s",mytitles[idx].serverFileType.c_str());
 			}
 			else if(mytitles[idx].isSwitch){
 				ImGui::Text("Switch Version: ");
 				ImGui::SameLine();
-				ImGui::Text(std::to_string(mytitles[idx].switch_version).c_str());	
+				ImGui::Text("%d (%s)",mytitles[idx].switch_version,mytitles[idx].switch_humanversion.c_str());	
 			}
 			else if(mytitles[idx].isServer){
 				ImGui::Text("Server Version: ");
 				ImGui::SameLine();
 				if(mytitles[idx].server_versions.back()<mytitles[idx].lastlive_version){
-					ImGui::TextColored(ImVec4(1.0f,0.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
+					if(mytitles[idx].extended_serverinfo.valid){
+						ImGui::TextColored(ImVec4(1.0f,0.0f,0.0f,1.0f),"%d (%s)",mytitles[idx].server_versions.back(),mytitles[idx].extended_serverinfo.humanversion.c_str());	
+					}else{
+						ImGui::TextColored(ImVec4(1.0f,0.0f,0.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
+					}
 				}else{
-					ImGui::TextColored(ImVec4(1.0f,1.0f,1.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
-					
+					if(mytitles[idx].extended_serverinfo.valid){
+						ImGui::TextColored(ImVec4(1.0f,1.0f,1.0f,1.0f),"%d (%s)",mytitles[idx].server_versions.back(),mytitles[idx].extended_serverinfo.humanversion.c_str());	
+					}else{
+						ImGui::TextColored(ImVec4(1.0f,1.0f,1.0f,1.0f),std::to_string(mytitles[idx].server_versions.back()).c_str());	
+					}
 				}
 				ImGui::Text("Live Version: ");
 				ImGui::SameLine();
 				ImGui::TextColored(ImVec4(0.0f,1.0f,0.0f,1.0f),std::to_string(mytitles[idx].lastlive_version).c_str());
-				
+				ImGui::Text("Server File Type (Basegame): %s",mytitles[idx].serverFileType.c_str());
 			}
 			if(mytitles[idx].extended_serverinfo.valid){
 					Separator();
@@ -262,3 +302,23 @@ namespace DetailWindows {
 	
 }
 
+namespace FooterWindows {
+	static std::string tag_name = std::string();
+
+	void Separator(void) {
+		ImGui::Dummy(ImVec2(0.0f, 5.0f)); // Spacing
+		ImGui::Separator();
+		ImGui::Dummy(ImVec2(0.0f, 5.0f)); // Spacing
+	}
+	void FooterWindow(){
+		FooterWindows::SetupWindow();
+		if (ImGui::Begin("Device Space", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+			ImGui::Text("SD Card : %s/%s",sdcard_free_space_human.c_str(),sdcard_total_space_human.c_str());
+			ImGui::Text("NAND : %s/%s",nand_free_space_human.c_str(),nand_total_space_human.c_str());
+		}
+		FooterWindows::ExitWindow();
+	}
+	
+	
+	
+}

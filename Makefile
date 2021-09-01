@@ -46,7 +46,7 @@ ROMFS		:=	romfs
 
 VERSION_MAJOR := 0
 VERSION_MINOR := 2
-VERSION_MICRO := 0
+VERSION_MICRO := 1
 
 APP_TITLE     := NSP Indexer Connect
 APP_AUTHOR    := proconsule

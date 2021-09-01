@@ -20,12 +20,25 @@
 #include "curlDownloader.h"
 #include "ServerTitles.h"
 #include "globals.h"
+#include "utils.h"
 
 
 Tex dummyNSP;
 Tex dummyNSZ;
 Tex dummyXCI;
 Tex dummyXCZ;
+
+s64 sdcard_total_space_size;
+s64 sdcard_free_space_size;
+
+std::string sdcard_total_space_human;
+std::string sdcard_free_space_human;
+
+s64 nand_total_space_size;
+s64 nand_free_space_size;
+
+std::string nand_total_space_human;
+std::string nand_free_space_human;
 
 char* serverUrl;
 
@@ -163,7 +176,7 @@ int main() {
 			PadState pad;
 			padInitializeDefault(&pad);
 
-			printf("\x1b[16;20HFailed to load config.ini file, press + to exit");
+			printf("Failed to load config.ini file, press + to exit\n");
 
 			while(appletMainLoop())
 			{
@@ -267,8 +280,7 @@ int main() {
 			return 0;
 			
 		}
-		myservertitles->GetServerTitles(mycurl->chunk.memory);
-		myservertitles->Match(mytitlemanager->mytitles);
+		
 		if(okdownload){
 			printf("Server info downloaded successful\n");
 		}else
@@ -279,6 +291,10 @@ int main() {
 			socketExit();
 			return 0;
 		}
+		
+		myservertitles->GetServerTitles(mycurl->chunk.memory);
+		myservertitles->Match(mytitlemanager->mytitles);
+		
 
 		consoleExit(NULL);
     if ( init() ) {
@@ -363,7 +379,21 @@ int main() {
 		TxtLoadFromFile("romfs:/dummy-xci.jpg",&dummyXCI.id,&dummyXCI.width,&dummyXCI.height);
 		TxtLoadFromFile("romfs:/dummy-xcz.jpg",&dummyXCZ.id,&dummyXCZ.width,&dummyXCZ.height);
 		
+		nsGetStorageSize(NcmStorageId_SdCard,&sdcard_total_space_size,&sdcard_free_space_size);
+		nsGetStorageSize(NcmStorageId_BuiltInUser,&nand_total_space_size,&nand_free_space_size);
 		
+		
+		
+		nand_total_space_human = humanSize(nand_total_space_size);
+		nand_free_space_human = humanSize(nand_free_space_size);
+		
+		sdcard_total_space_human = humanSize(sdcard_total_space_size);
+		sdcard_free_space_human = humanSize(sdcard_free_space_size);
+		
+#ifdef DEBUG_NXLINK		
+		printf("SD: %s/%s\n",sdcard_free_space_human.c_str(),sdcard_total_space_human.c_str());
+		printf("NAND: %s/%s\n",nand_free_space_human.c_str(),nand_total_space_human.c_str());
+#endif
 		plExit();
 		romfsExit();
 		
@@ -426,7 +456,7 @@ int main() {
 			
 			myservertitles->matchedtitles = DetailWindows::DetailServerWindow(myservertitles->matchedtitles,detailidx,myservertitles->myserverconfig);
 			detailidx = Windows::LocaltoServerWindow(myservertitles->matchedtitles,focusonMain);
-			
+			FooterWindows::FooterWindow();
 			
 			
             ImGui::Render();

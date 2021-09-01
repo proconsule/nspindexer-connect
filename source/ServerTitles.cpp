@@ -45,6 +45,7 @@ bool ServerTitles::GetServerTitles(char * jsondata){
 			const Value& thistitle = titlesarray[mytitlekey.c_str()];
 			const Value& thistitleupdates = thistitle["updates"];
 			myservertitle.titleText = thistitle["name"].GetString();
+			myservertitle.basegame_size = thistitle["size_real"].GetInt64();
 #ifdef DEBUG_NXLINK
 			printf("%s\n",myservertitle.titleText.c_str());
 #endif
@@ -87,6 +88,7 @@ void ServerTitles::Match(vector<Title> switchtitles,int filter){
 		tmpmatched.server_versions = mytitles[i].versions;
 		tmpmatched.lastlive_version = mytitles[i].lastliveversion;
 		tmpmatched.server_filePaths = mytitles[i].filePaths;
+		tmpmatched.server_basegame_size = mytitles[i].basegame_size;
 		matchedtitles.push_back(tmpmatched);
 	}
 	
@@ -97,6 +99,9 @@ void ServerTitles::Match(vector<Title> switchtitles,int filter){
 				matchedtitles[n].authorText = switchtitles[i].authorText;
 				matchedtitles[n].isSwitch = true;
 				matchedtitles[n].switch_version = switchtitles[i].lastversion;
+				matchedtitles[n].switch_humanversion = switchtitles[i].update_humanversion;
+				matchedtitles[n].sd_size = switchtitles[i].sd_size;
+				matchedtitles[n].nand_size = switchtitles[i].nand_size;
 				matchedtitles[n].icon = switchtitles[i].icon;
 				matchedtitles[n].iconsize = 0x20000;
 				tmpswitchapp_id = matchedtitles[n].app_id;
@@ -111,6 +116,9 @@ void ServerTitles::Match(vector<Title> switchtitles,int filter){
 			tmpmatched.isServer = false;
 			tmpmatched.isSwitch = true;
 			tmpmatched.switch_version  = switchtitles[i].lastversion;
+			tmpmatched.switch_humanversion = switchtitles[i].update_humanversion;
+			tmpmatched.sd_size = switchtitles[i].sd_size;
+			tmpmatched.nand_size = switchtitles[i].nand_size;
 			tmpmatched.icon = switchtitles[i].icon;
 			tmpmatched.iconsize = 0x20000;
 			matchedtitles.push_back(tmpmatched);
