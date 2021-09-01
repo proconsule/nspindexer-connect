@@ -55,6 +55,7 @@ Just this!
 ##
 
 # Thanks to
+- jangrewe (NSP Indexer coauthor) for following me in this idea
 - joel16 for NX-Shell (Next). I take ImGui windows system from there
 - XorTroll for Goldleaf. I take a small part of code (for retriving installed switch titles) 
 - All guys of Switchbrew (for TONS of info and tools they published)
